@@ -7,7 +7,9 @@
   * clusterctl installieren
   * kubectl installieren 
 
-## Schritt 1: Cluster erstellen mit kubeadm
+## Phase 1: Kubernetes-Cluster erstellen und zu Management-Cluster upgraden 
+
+## Schritt 1.1: Cluster erstellen mit kubeadm
 
   * Wir verwenden dafür ein paar selbsterstellte Scripte
 
@@ -19,7 +21,7 @@ cd multi-kubeadmin
 # ./create-multi.sh 2
 ```
 
-## Schritt 2: kubectl runterladen und installieren 
+## Schritt 1.2: kubectl runterladen und installieren 
 
 ```
 # Variante 1:
@@ -38,7 +40,7 @@ chmod +x ./kubectl
 mv kubectl /usr/local/bin
 ```
 
-## Schritt 3: kubeconfig einrichten und Verbindung prüfen 
+## Schritt 1.3: kubeconfig einrichten und Verbindung prüfen 
 
 ```
 # aus dem Onlinesystem unter /etc/kubernetes/admin.conf den Inhalt kopieren
@@ -53,7 +55,7 @@ vi config
 kubectl cluster-info
 ```
 
-## Schritt 4: clusterctl installieren 
+## Schritt 1.4: clusterctl installieren 
 
 ```
 sudo su -
@@ -63,7 +65,7 @@ sudo install -o root -g root -m 0755 clusterctl /usr/local/bin/clusterctl
 clusterctl version 
 ```
 
-## Schritt 5: Clusterctl initialisieren (mit dem richtigen provider)
+## Schritt 1.5: Clusterctl initialisieren (mit dem richtigen provider)
 
 ```
 # Feature Gate, das für die cluster-api gebraucht wird 
@@ -75,7 +77,12 @@ export DO_B64ENCODED_CREDENTIALS="$(echo -n "${DIGITALOCEAN_ACCESS_TOKEN}" | bas
 clusterctl init --infrastructure digitalocean
 ```
 
-## Schritt 6: install doctl (used to interact with digitalocean) 
+## Phase 2: Spezielles Kubernetes Images verweden 
+
+  * Direkt mit allen Komponenten im Bauch in einer speziellen Version (z.B. 1.28.9)
+  * die für Kubernetes gebraucht werden 
+
+## Schritt 2.1: install doctl (used to interact with digitalocean) 
 
 ```
 cd 
@@ -85,7 +92,7 @@ sudo mv ~/doctl /usr/local/bin
 sudo chmod +x /usr/local/bin/doctl 
 ```
 
-## Schritt 7: install image builder for creating image for digitalocean 
+## Schritt 2.2: install image builder for creating image for digitalocean 
 
 ```
 # if not already done before 
@@ -107,20 +114,57 @@ make build-do-ubuntu-2404
 
 ![image](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/b159c6fe-35c2-443f-a265-8cdf4ac2ef55)
 
-## Schritt 8: Which kubernetes cluster version is it ?
+## Schritt 2.3: Which kubernetes cluster version is it ?
 
 ```
 # you need to use exactly the same version for creating your workload cluster
 Creating snapshot: Cluster API Kubernetes v1.28.9 on Ubuntu 24.04
 ```
 
-## Schritt 9: Allow Image to be use in Frankfurt Datacenter (FRA1) 
+## Schritt 2.4: Allow Image to be use in Frankfurt Datacenter (FRA1) 
 
 ```
 -> Add to Region FRA1 -> under Manage -> Backups&Snaphots -> Snapshots 
 Please do this through the web-interface of DigitalOcean 
 # IF YOU DO NOT DO THIS... Droplets cannot be created because they are in NYC1
 ```
+
+## Phase 3: Workload - Cluster mit Cluster - API erstellen 
+
+## Schritt 3.1 Umgebung zum Ausrollen von ControlNode und Worker vorbereiten  
+
+```
+# control the datacenter - default nyc1 
+export DO_REGION=fra1
+# control size of machines
+# default 1vcpu-1gb 
+export DO_CONTROL_PLANE_MACHINE_TYPE=s-2vcpu-2gb
+export DO_NODE_MACHINE_TYPE=s-2vcpu-2gb
+# needed to set up the api provider 
+export DO_B64ENCODED_CREDENTIALS="$(\
+    echo -n "$DIGITALOCEAN_ACCESS_TOKEN" \
+    | base64 \
+    | tr -d '\n')"
+```
+
+## Schritt 3.2 Snaphot-id ausfindig machen 
+
+```
+doctl compute image list-user
+```
+
+```
+158401784    Cluster API Kubernetes v1.28.9 on Ubuntu 24.04
+```
+
+## Schritt 3.3 Use this snapshot for creation of workload-cluster 
+
+```
+export DO_CONTROL_PLANE_MACHINE_IMAGE=158401784
+export DO_NODE_MACHINE_IMAGE=158401784
+```
+
+
 
 
 ## References:
