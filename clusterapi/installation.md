@@ -1,8 +1,13 @@
 # Installation mit Kubernetes Cluster API (Digitalocean) 
 
-## Voraussetzungen:
+## Komponenten 
 
-  * Cluster erstellt mit kubeadm 
+  1. 1x Management-Cluster
+  1. beliebig viele Workload Cluster, die vom Management Cluster verwaltet werden
+
+## Voraussetzungen (für Management - Cluster) 
+
+  * Cluster erstellt mit kubeadm (für Management - Cluster) 
   * Zugriff zu Cluster auf ./kube/config eingerichtet.
   * clusterctl installieren
   * kubectl installieren 
@@ -164,7 +169,70 @@ export DO_CONTROL_PLANE_MACHINE_IMAGE=158401784
 export DO_NODE_MACHINE_IMAGE=158401784
 ```
 
+## Schritt 3.4 Wir brauchen ein ssh-key 
 
+```
+# das sollte ein Schlüssel sein, für den wir bereits einen privaten Schlüssel haben
+# und den öffentlichen bei digitalocean hochgeladen haben.
+# Dieser wird dann für die Maschinen verwendet, die hochgezogen werden
+doctl compute ssh-key list 
+
+# wir nehmen den kubernetes key
+42134500    key_training_kubernetes
+```
+
+```
+# So übergeben wir diesen für das doctl - Tool
+export DO_SSH_KEY_FINGERPRINT=42134500
+```
+
+## Schritt 3.5 Cluster.yaml (config) für cluster-api erstellen 
+
+```
+# Achtung, es muss die gleiche version verwendet werden für die kubernetes version, wie im image
+# das mit dem Image-Builder erstellt wurde
+```
+
+```
+# Check the variables 
+# Show use the necessary env-variables.
+clusterctl generate cluster cluster1 \
+    --infrastructure digitalocean \
+    --target-namespace infra \
+    --kubernetes-version v1.28.9 \
+    --control-plane-machine-count 1 \
+    --worker-machine-count 3 \
+    --list-variables 
+```
+
+```
+# Now create the cluster.yaml file (config to create it)
+# Kuberentes must be the same version as you created the snapshots for do
+# to be used for digitalocean -> creating a cluster there
+clusterctl generate cluster cluster1 \
+    --infrastructure digitalocean \
+    --target-namespace infra \
+    --kubernetes-version v1.28.9 \
+    --control-plane-machine-count 1 \
+    --worker-machine-count 3 \
+    | tee cluster.yaml
+```
+
+```
+# Create namespace and management cluster for that
+kubectl create namespace infra
+
+# and create it 
+kubectl apply --filename cluster.yaml
+```
+
+## Schritt 3.5: Wait till controlplane is ready 
+
+```
+# Achtung das dauert wieder eine ganze Weile,
+# Man kann das im Backend von Digitalocean beobachten
+kubectl -n infra get kubeadmcontrolplane
+```
 
 
 ## References:
