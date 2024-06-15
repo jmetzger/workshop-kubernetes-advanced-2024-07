@@ -232,6 +232,45 @@ kubectl apply --filename cluster.yaml
 # Achtung das dauert wieder eine ganze Weile,
 # Man kann das im Backend von Digitalocean beobachten
 kubectl -n infra get kubeadmcontrolplane
+kubectl -n infra get domachines
+```
+
+## Schritt 3.6: Get kubeconfig 
+
+```
+# When initialized get kubeconfig 
+clusterctl --namespace infra \
+    get kubeconfig cluster1 \
+    | tee kubeconfig.yaml
+```
+
+## Schritt 3.7. Access new cluster with kubeconfi 
+
+```
+kubectl --kubeconfig kubeconfig.yaml get ns
+# Are all pods ready / of coredns not ;o) 
+kubectl --kubeconfig kubeconfig.yaml -n kube-system get pods 
+kubectl --kubeconfig kubeconfig.yaml get nodes
+# |    | nodes are not ready, because the is no cni-provider installed yet
+# v    v 
+```
+
+![image](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/b2fa4c0c-378b-49d8-8d57-426193d7ae75)
+
+## Schritt 3.8. Now install cni -> calico (we will use the operator)
+
+```
+kubectl --kubeconfig kubeconfig.yaml create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
+# We also want the crd's
+kubectl --kubeconfig kubeconfig.yaml create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml
+```
+
+## Schritt 3.9. See the rollout and findout, if everything works 
+
+```
+# Now watch if everything works smoothly
+
+
 ```
 
 
