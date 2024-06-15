@@ -107,6 +107,21 @@ make build-do-ubuntu-2404
 
 ![image](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/b159c6fe-35c2-443f-a265-8cdf4ac2ef55)
 
+## Schritt 8: Which kubernetes cluster version is it ?
+
+```
+# you need to use exactly the same version for creating your workload cluster
+Creating snapshot: Cluster API Kubernetes v1.28.9 on Ubuntu 24.04
+```
+
+## Schritt 9: Allow Image to be use in Frankfurt Datacenter (FRA1) 
+
+```
+-> Add to Region FRA1 -> under Manage -> Backups&Snaphots -> Snapshots 
+Please do this through the web-interface of DigitalOcean 
+# IF YOU DO NOT DO THIS... Droplets cannot be created because they are in NYC1
+```
+
 
 ## References:
 
