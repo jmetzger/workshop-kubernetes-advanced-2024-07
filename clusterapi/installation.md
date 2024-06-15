@@ -88,9 +88,17 @@ sudo chmod +x /usr/local/bin/doctl
 ## Schritt 7: install image builder for creating image for digitalocean 
 
 ```
+# if not already done before 
+export DIGITALOCEAN_ACCESS_TOKEN=<your-access-token>
 # as unprivileged user 
 git clone https://github.com/kubernetes-sigs/image-builder.git
 cd image-builder/images/capi
+# install dependencies 
+make deps-do
+# show possible builds
+make help
+# Size of machine will always be 1gb and 1vcpu created in NYC1
+make build-do-ubuntu-2404
 ```
 
 
