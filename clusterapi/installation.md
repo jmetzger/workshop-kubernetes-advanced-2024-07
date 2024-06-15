@@ -101,6 +101,9 @@ make help
 make build-do-ubuntu-2404
 ```
 
+  * ACHTUNG: Das dauert eine ganze Weile das bauen
+
+![image](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/61cfdf53-d97e-4b0f-9b8e-1b2d0445b857)
 
 
 
