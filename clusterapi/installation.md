@@ -291,6 +291,18 @@ kubectl
 kubectl --kubeconfig=kubeconfig.yaml apply -f https://raw.githubusercontent.com/digitalocean/digitalocean-cloud-controller-manager/v0.1.54/releases/digitalocean-cloud-controller-manager/v0.1.54.yml
 ```
 
+### Phase 4: Cleanup 
+
+```
+# Delete cluster
+kubectl -n infra delete cluster cluster1
+
+# Delete management cluster
+# after that it probably just will be a normal cluster 
+kubectl delete cluster 
+```
+
+
 ## References:
 
   * https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl
