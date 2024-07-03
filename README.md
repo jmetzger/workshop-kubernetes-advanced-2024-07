@@ -14,7 +14,8 @@
      * [HA-Cluster](kubernetes-controlplane/ha-cluster.md)
 
   1. Installation
-    * [Basic Installation with microk8s](/microk8s/installation-ubuntu-snap.md)
+     * [Basic Installation with microk8s](/microk8s/installation-ubuntu-snap.md)
+     * [Create cluster after basic installation](/microk8s/cluster.md)
   
   1. Kubernetes Praxis API-Objekte 
      * [Das Tool kubectl (Devs/Ops) - Spickzettel](/kubectl/spickzettel.md)
