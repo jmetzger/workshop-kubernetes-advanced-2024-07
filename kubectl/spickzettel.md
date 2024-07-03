@@ -7,7 +7,10 @@
 # Show Information about the cluster 
 kubectl cluster-info 
 
-# Welche api-resources gibt es ?
+kubectl get nodes
+kubectl get nodes -o wide 
+
+# Which  api-resources ? 
 kubectl api-resources 
 
 # Hilfe zu object und eigenschaften bekommen
