@@ -36,5 +36,10 @@ spec:
 ```
 
 ```
-kubectl apply -f rs.yml 
+kubectl apply -f .
+kubectl get all
+# delete one of the pods 
+kubectl delete po nginx-replica-set-xyzhg
+# new pod should have been created 
+kubectl get all 
 ```
