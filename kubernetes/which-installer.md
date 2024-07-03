@@ -20,9 +20,15 @@ So there are other tools/distri around helping you with that.
     (variety of shapes and forms (e.g. single-node, multi-node, HA, self-hosted))
   * Most manual way to create and manage a cluster 
 
+### Advantages 
+
+  * Easier to setup to specific configurations (Infrastruktur)
+  * Using a different (CNI)
+  * Easier using Cutting Edge Features (Feature Gates) 
+
 ### Disadvantages 
 
-  * Plugins sind oftmals etwas schwierig zu aktivieren
+  * harder to setup  
 
 ## microk8s 
 
@@ -65,10 +71,9 @@ Ref: https://ubuntu.com/blog/introduction-to-microk8s-part-1-2
   * Runs und Linux/Windows/Mac
   * Supports plugin (Different name ?)
 
-
 ## k3s
 
-
+  *  stripped version rancherlabs (rke) 
 
 ## kind (Kubernetes-In-Docker)
 
