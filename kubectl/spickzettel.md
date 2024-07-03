@@ -3,7 +3,8 @@
 ## Allgemein 
 
 ```
-# Zeige Information über das Cluster 
+# Zeige Information über das Cluster
+# Show Information about the cluster 
 kubectl cluster-info 
 
 # Welche api-resources gibt es ?
