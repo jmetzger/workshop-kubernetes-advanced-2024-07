@@ -77,5 +77,5 @@ Er stellt sicher, dass Container in einem Pod ausgeführt werden.
   
 ## Referenzen 
 
-  * https://www.redhat.com/de/topics/containers/kubernetes-architecture
+  * https://www.redhat.com/en/topics/containers/kubernetes-architecture
 
