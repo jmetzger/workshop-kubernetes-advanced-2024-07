@@ -12,11 +12,10 @@
   1. Kubernetes Controlplane
      * [Renew Certificate](kubernetes-controlplane/renew-certs.md)
      * [HA-Cluster](kubernetes-controlplane/ha-cluster.md)
-  
-  1. Installation 
-     * [Kubernetes mit der Cluster API aufsetzen](clusterapi/installation.md)
-     * [Kubernetes mit kubadm aufsetzen (calico)](kubeadm/installation-cni-calico.md)
 
+  1. Installation
+    * [Basic Installation with microk8s](/microk8s/installation-ubuntu-snap.md)
+  
   1. Kubernetes Praxis API-Objekte 
      * [Das Tool kubectl (Devs/Ops) - Spickzettel](/kubectl/spickzettel.md)
      * [Bauen einer Applikation mit Resource Objekten](bauen-einer-webanwendung.md)
@@ -87,6 +86,10 @@
 
 ## Backlog 
 
+  1. Installation 
+     * [Kubernetes mit der Cluster API aufsetzen](clusterapi/installation.md)
+     * [Kubernetes mit kubadm aufsetzen (calico)](kubeadm/installation-cni-calico.md)
+      
   1. Kubernetes - Misc 
      * [Wann wird podIP vergeben ?](kubectl/run-with-example.md)
      * [Bash completion installieren](kubectl/bash-completion.md)
