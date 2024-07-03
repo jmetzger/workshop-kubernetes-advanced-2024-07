@@ -19,7 +19,7 @@
      * [Connect from remote](/microk8s/connect-from-remote.md)
   
   1. Kubernetes Praxis API-Objekte 
-     * [Das Tool kubectl (Devs/Ops) - Spickzettel](/kubectl/spickzettel.md)
+     * [Das Tool kubectl (Devs/Ops) - Cheatsheet](/kubectl/spickzettel.md)
      * [Bauen einer Applikation mit Resource Objekten](bauen-einer-webanwendung.md)
      * [kubectl/manifest/deployments](/kubectl-examples/03-nginx-deployment.md)
      * [Services - Aufbau](/kubernetes/services-aufbau.md)
