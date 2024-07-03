@@ -15,9 +15,13 @@ sudo snap install kubectl --classic
 microk8s config > /tmp/config 
 ```
 
-
+```
+# Optional or simply copy & paste 
 # Download (scp config file) and store in .kube - folder  
-cd ~
+```
+
+```
+cd
 mkdir .kube
 cd .kube  # Wichtig: config muss nachher im verzeichnis .kube liegen 
 # scp kurs@master_server:/path/to/remote_config config 
