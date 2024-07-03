@@ -16,6 +16,7 @@
   1. Installation
      * [Basic Installation with microk8s](/microk8s/installation-ubuntu-snap.md)
      * [Create cluster after basic installation](/microk8s/cluster.md)
+     * [Connect from remote](/microk8s/connect-from-remote.md)
   
   1. Kubernetes Praxis API-Objekte 
      * [Das Tool kubectl (Devs/Ops) - Spickzettel](/kubectl/spickzettel.md)
