@@ -12,7 +12,8 @@ sudo snap install kubectl --classic
 ```
 # On MASTER -server get config 
 # als root
-microk8s config > /tmp/config 
+microk8s config > /tmp/config
+cat /tmp/config 
 ```
 
 ```
