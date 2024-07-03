@@ -18,6 +18,9 @@
      * [Create cluster after basic installation](/microk8s/cluster.md)
      * [Connect from remote](/microk8s/connect-from-remote.md)
      * [Setup bash completion](kubectl/en/bash-completion.md)
+    
+  1. Kubernetes Imperative Commands (for debugging)
+     * [Example with run](/kubectl/run-with-example.md)
   
   1. Kubernetes Praxis API-Objekte 
      * [Das Tool kubectl (Devs/Ops) - Cheatsheet](/kubectl/spickzettel.md)
