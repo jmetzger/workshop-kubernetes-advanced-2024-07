@@ -1,13 +1,20 @@
 # Connect from remote 
 
+## Step 1: Install kubectl on local machine (or jump-server)
+
 ```
 # on CLIENT install kubectl 
-sudo snap install kubectl --classic 
+sudo snap install kubectl --classic
+```
 
+## Step 2: configure kubectl 
+
+```
 # On MASTER -server get config 
 # als root
-cd
-microk8s config > /home/kurs/remote_config 
+microk8s config > /tmp/config 
+```
+
 
 # Download (scp config file) and store in .kube - folder  
 cd ~
