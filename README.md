@@ -39,7 +39,7 @@
      * [DNS - Resolution - Services](kubernetes-networks/dns-resolution-services.md)
      * DaemonSets (Devs/Ops)
      * [Hintergrund Ingress](/kubernetes/ingress.md) 
-     * [Beispiel mit Hostnamen](/kubectl-examples/04-ingress-nginx-with-hostnames.md)
+     * [Example with Hostnames](/kubectl-examples/04-ingress-nginx-with-hostnames.md)
      * [Configmap MariaDB - Example](kubectl-examples/06a-configmap-mariadb.md)
     
   1. Kubernetes - Probes
