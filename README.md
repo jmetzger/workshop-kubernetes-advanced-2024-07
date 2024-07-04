@@ -24,6 +24,9 @@
     
   1. LoadBalancer
      * [Setup internal loadBalancer for type LoadBalancer in Service](metallb/metallb-helm-l2-aufsetzen.md)
+    
+  1. Installation IngressController
+     * [Install Ingress On Digitalocean](/digitalocean/install-ingress-helm.md)
   
   1. Kubernetes Praxis API-Objekte 
      * [Das Tool kubectl (Devs/Ops) - Cheatsheet](/kubectl/spickzettel.md)
@@ -126,7 +129,6 @@
      * [Ingress Controller auf Digitalocean (doks) mit helm installieren](/digitalocean/ingress-auf-digitalocean-mit-helm.md)
      * [Documentation for default ingress nginx](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/)
      * [Beispiel Ingress](/kubectl-examples/04-ingress-nginx.md)
-     * [Install Ingress On Digitalocean DOKS](/digitalocean/install-ingress-helm.md)
      * [Achtung: Ingress mit Helm - annotations](/ingress-mit-helm-class-achtung.md)
      * [Permanente Weiterleitung mit Ingress](/kubectl-examples/05-ingress-permanent-redirect.md)
      * [ConfigMap Example](/kubectl-examples/06-configmap.md)
