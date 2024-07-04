@@ -21,6 +21,9 @@
     
   1. Kubernetes Imperative Commands (for debugging)
      * [Example with run](/kubectl/run-with-example.md)
+    
+  1. LoadBalancer
+     * [Setup internal loadBalancer for type LoadBalancer in Service](metallb/metallb-helm-l2-aufsetzen.md)
   
   1. Kubernetes Praxis API-Objekte 
      * [Das Tool kubectl (Devs/Ops) - Cheatsheet](/kubectl/spickzettel.md)
