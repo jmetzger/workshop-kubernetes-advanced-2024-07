@@ -1,20 +1,21 @@
-# Ingress Controller - Feature aufsetzen mit Helm auf Digitalocean 
+# Setup Ingress Controller with Digitalocean and helm 
 
 ## Basics 
 
-  * Das Verfahren funktioniert auch so auf anderen Plattformen, wenn helm verwendet wird und noch kein IngressController vorhanden
-  * Ist kein IngressController vorhanden, werden die Ingress-Objekte zwar angelegt, es funktioniert aber nicht. 
+  * works for all plattform with helm if no ingresscontroller ist present
+  * if you have ingress - objekts and no ingresscontroller nothing works  
 
 ## Prerequisites 
 
-  * kubectl muss eingerichtet sein 
+  * kubectl must be set up
 
 ## Walkthrough (Setup Ingress Controller) 
 
 ```
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
-helm show values ingress-nginx/ingress-nginx
+
+# helm show values ingress-nginx/ingress-nginx
 
 # It will be setup with type loadbalancer - so waiting to retrieve an ip from the external loadbalancer
 # This will take a little. 
