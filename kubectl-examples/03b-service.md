@@ -35,6 +35,8 @@ spec:
 
 ```
 kubectl apply -f .
+kubectl get svc my-nginx
+kubectl describe svc my-nginx
 ```
 
 ## Schritt 2:
