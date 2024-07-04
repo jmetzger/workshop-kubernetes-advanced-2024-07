@@ -35,8 +35,7 @@ spec:
 
 ```
 kubectl apply -f .
-kubectl get svc my-nginx
-kubectl describe svc my-nginx
+
 ```
 
 ## Schritt 2:
@@ -58,6 +57,18 @@ spec:
 
 ```
 kubectl apply -f . 
+kubectl get svc my-nginx
+kubectl describe svc my-nginx
+```
+
+```
+# Testing
+kubectl delete -f 01-deploy.yml
+
+# No endpoints in svc 
+kubectl describe svc my-nginx
+kubectl apply -f 01-deploy.yml
+kubectl describe svc my-nginx
 ```
 
 ## Schritt 2b: NodePort 
