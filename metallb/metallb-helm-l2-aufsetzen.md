@@ -1,6 +1,6 @@
 # Metallb with helm for L2 - Installation (DigitalOcean) 
 
-## Step 1: helm chart installi 
+## Step 1: helm chart install
 
 ```
 helm repo add metallb https://metallb.github.io/metallb
