@@ -4,12 +4,13 @@
 
 ```
 Managed Cluster und ich kann nicht auf einzelne Nodes per ssh zugreifen
+Managed Cluster and i am not able to access nodes per ssh.
 ```
 
-## Behelf: Eigenen Pod starten mit busybox 
+## Behelf: Eigenen Pod starten mit busybox // Bring your own pod 
 
 ```
-# laengere Version 
+# laengere Version / longer version 
 kubectl run podtest --rm -ti --image busybox -- /bin/sh
 ```
 
@@ -21,7 +22,7 @@ kubectl run podtest --rm -ti --image busybox
 ## Example test connection 
 
 ```
-# wget befehl zum Kopieren
+# wget (to copy)
 wget -O - http://10.244.0.99
 ```
 
