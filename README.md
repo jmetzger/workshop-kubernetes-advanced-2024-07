@@ -40,7 +40,7 @@
      * [Überblick Probes](probes/overview.md) 
   
   1. Kubernetes - Wartung / Debugging 
-     * [Netzwerkverbindung zu pod testen](/tipps-tricks/verbindung-zu-pod-testen.md)
+     * [Create Network-Connection to pod](/tipps-tricks/verbindung-zu-pod-testen.md)
 
   1. Kubernetes Backup 
      * [Backups mit Velero](/backups/cluster-backup-velero.md)
