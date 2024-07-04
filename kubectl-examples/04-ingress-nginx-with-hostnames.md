@@ -80,7 +80,7 @@ spec:
 kubectl apply -f banana.yml
 ```
 
-## Step 2: Ingress 
+### Step 2: Ingress 
 
 ```
 # Ingress
