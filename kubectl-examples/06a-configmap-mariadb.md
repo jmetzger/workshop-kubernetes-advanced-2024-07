@@ -1,6 +1,6 @@
 # ConfigMap Example (Mariadb) 
 
-## Schritt 1: configmap 
+## Step 1: configmap 
 
 ```
 cd 
@@ -29,7 +29,7 @@ kubectl get cm mariadb-configmap -o yaml
 ```
 
 
-## Schritt 2: Deployment 
+## Step 2: Deployment 
 ```
 nano 02-deploy.yml
 ```
