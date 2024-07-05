@@ -61,6 +61,13 @@ spec:
 
 ```
 kubectl apply -f .
+kubectl exec -it  mariadb-deployment-c6df6f959-9jvkb -- bash
+```
+
+```
+# env
+env
+env | grep -i mariadb_root
 ```
 
 ## Important Sidenode 
