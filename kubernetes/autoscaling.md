@@ -155,6 +155,36 @@ spec:
 For scaling down the stabilization window is 300 seconds (or the value of the --horizontal-pod-autoscaler-downscale-stabilization flag if provided)
 ```
 
+## Prevent Downscaling 
+
+```
+# Adjust down to 1 minute 
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hello
+spec:
+  # change to 60 secs here 
+  behavior:
+    scaleDown:
+      selectPolicy: Disabled
+  # end of behaviour change
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+    
+```
+
 ## Reference 
 
   * https://docs.digitalocean.com/tutorials/cluster-autoscaling-ca-hpa/
