@@ -15,7 +15,7 @@ helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/cs
 helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-system --version v4.7.0
 ```
 
-### Step 2: Storage Class 
+## Step 2: Storage Class 
 
 ```
 apiVersion: storage.k8s.io/v1
@@ -24,7 +24,7 @@ metadata:
   name: nfs-csi
 provisioner: nfs.csi.k8s.io
 parameters:
-  server: 10.135.0.67
+  server: 10.135.0.30
   share: /var/nfs/tln1
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
