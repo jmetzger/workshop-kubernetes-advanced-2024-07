@@ -44,6 +44,9 @@
      * [Hintergrund Ingress](/kubernetes/ingress.md) 
      * [Example with Hostnames](/kubectl-examples/04-ingress-nginx-with-hostnames.md)
      * [Configmap MariaDB - Example](kubectl-examples/06a-configmap-mariadb.md)
+
+  1. Kubernetes - Sidecar Example
+     * [Kubernetes Sidecar](kubectl-examples/21-sidecar.md)
     
   1. Kubernetes - Probes
      * [Überblick Probes](probes/overview.md) 
