@@ -68,6 +68,7 @@
      
   1. Kubernetes Tipps & Tricks 
      * [kubectl kubeconfig mergen](/kubectl/merge-kubeconfig.md)
+     * [Create confgmap from file](tipps-tricks/creating-configmap-from-files.md)
 
   1. Kubernetes Certificates (Control Plane) / Security
      * [vmware - cluster api](https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/1.6/vmware-tanzu-kubernetes-grid-16/GUID-cluster-lifecycle-secrets.html)
