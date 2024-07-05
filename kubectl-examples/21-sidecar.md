@@ -15,6 +15,7 @@ nano 01-pod.yml
 ```
 
 ```
+apiVersion: v1
 kind: Pod
 metadata:
   name: sidecar-example 
