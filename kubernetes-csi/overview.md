@@ -15,7 +15,7 @@ III. Automatically delete the storage when no longer needed.
 
 Vendor needed to wait till his code was checked in in tree of kubernetes.
 
-11.3.5. Unterschied statisch, dynamisch.
+11.3.5. Difference static and dynamic 
 
 The main difference relies on the moment when you want to configure storage. For instance, if you need to pre-populate data in a volume, you choose static provisioning. Whereas, if you need to create volumes on demand, you go for dynamic provisioning.
 
