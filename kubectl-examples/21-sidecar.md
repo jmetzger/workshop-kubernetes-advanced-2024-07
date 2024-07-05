@@ -17,7 +17,7 @@ nano 01-pod.yml
 ```
 kind: Pod
 metadata:
-  name: example
+  name: sidecar-example 
 spec:
   securityContext:
     runAsUser: 0
@@ -50,3 +50,9 @@ spec:
   - name: shared-data
     emptyDir: {}
 ```
+
+```
+kubectl apply -f .
+kubectl get pods sidecar-example
+kubectl decribe pods sidecar-example
+``` 
