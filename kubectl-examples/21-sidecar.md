@@ -56,4 +56,7 @@ spec:
 kubectl apply -f .
 kubectl get pods sidecar-example
 kubectl decribe pods sidecar-example
+# exec into my-nginx
+kubectl exec -it sidecar-example -c my-nginx -- sh
+
 ``` 
