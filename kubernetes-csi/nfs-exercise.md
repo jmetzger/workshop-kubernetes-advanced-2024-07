@@ -8,7 +8,7 @@
 curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/v4.7.0/deploy/install-driver.sh | bash -s v4.7.0 --
 ```
 
-## Step 1b: Version with helm (better)
+## Step 1b: Version with helm (does not work with microk8s - perm problems ?)
 
 ```
 helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
