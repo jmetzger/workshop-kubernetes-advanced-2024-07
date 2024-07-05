@@ -35,7 +35,6 @@ mountOptions:
 ## Step 3: Persistent Volume Claim 
 
 ```
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
