@@ -120,7 +120,7 @@ spec:
 
 ## Downscaling 
  
-   * Downscalinng will happen after 5 minutes o
+   * Downscaling will happen after 5 minutes o
 
 ```
 # Adjust down to 1 minute 
