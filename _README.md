@@ -4,6 +4,7 @@
 ## Agenda
   1. Kubernetes - Überblick
      * [Aufbau Allgemein](#aufbau-allgemein)
+     * [Installation Variations](#installation-variations)
      * [Structure Kubernetes Deep Dive](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/1ca0d174-f354-43b2-81cc-67af8498b56c)
      * [Ports und Protokolle](https://kubernetes.io/docs/reference/networking/ports-and-protocols/)
      * [kubelet garbage collection](#kubelet-garbage-collection)
@@ -11,28 +12,47 @@
   1. Kubernetes Controlplane
      * [Renew Certificate](#renew-certificate)
      * [HA-Cluster](#ha-cluster)
-  
-  1. Installation 
-     * [Kubernetes mit der Cluster API aufsetzen](#kubernetes-mit-der-cluster-api-aufsetzen)
-     * [Kubernetes mit kubadm aufsetzen (calico)](#kubernetes-mit-kubadm-aufsetzen-calico)
 
+  1. Installation
+     * [Basic Installation with microk8s](#basic-installation-with-microk8s)
+     * [Create cluster after basic installation](#create-cluster-after-basic-installation)
+     * [Connect from remote](#connect-from-remote)
+     * [Setup bash completion](#setup-bash-completion)
+    
+  1. Kubernetes Imperative Commands (for debugging)
+     * [Example with run](#example-with-run)
+    
+  1. LoadBalancer
+     * [Setup internal loadBalancer for type LoadBalancer in Service](#setup-internal-loadbalancer-for-type-loadbalancer-in-service)
+    
+  1. Scale
+     * [Horizontal Pod Autoscaler](#horizontal-pod-autoscaler)
+    
+  1. Installation IngressController
+     * [Install Ingress On Digitalocean](#install-ingress-on-digitalocean)
+  
   1. Kubernetes Praxis API-Objekte 
-     * [Das Tool kubectl (Devs/Ops) - Spickzettel](#das-tool-kubectl-devsops---spickzettel)
-     * [Bauen einer Applikation mit Resource Objekten](#bauen-einer-applikation-mit-resource-objekten)
+     * [Das Tool kubectl (Devs/Ops) - Cheatsheet](#das-tool-kubectl-devsops---cheatsheet)
+     * [Build applikation with Resource Objects](#build-applikation-with-resource-objects)
+     * [Create Pod](#create-pod)
+     * [Create Replicaset](#create-replicaset)
      * [kubectl/manifest/deployments](#kubectlmanifestdeployments)
      * [Services - Aufbau](#services---aufbau)
      * [kubectl/manifest/service](#kubectlmanifestservice)
      * [DNS - Resolution - Services](#dns---resolution---services)
      * DaemonSets (Devs/Ops)
      * [Hintergrund Ingress](#hintergrund-ingress)
-     * [Beispiel mit Hostnamen](#beispiel-mit-hostnamen)
+     * [Example with Hostnames](#example-with-hostnames)
      * [Configmap MariaDB - Example](#configmap-mariadb---example)
+
+  1. Kubernetes - Sidecar Example
+     * [Kubernetes Sidecar](#kubernetes-sidecar)
     
   1. Kubernetes - Probes
      * [Überblick Probes](#überblick-probes)
   
   1. Kubernetes - Wartung / Debugging 
-     * [Netzwerkverbindung zu pod testen](#netzwerkverbindung-zu-pod-testen)
+     * [Create Network-Connection to pod](#create-network-connection-to-pod)
 
   1. Kubernetes Backup 
      * [Backups mit Velero](#backups-mit-velero)
@@ -48,6 +68,7 @@
      
   1. Kubernetes Tipps & Tricks 
      * [kubectl kubeconfig mergen](#kubectl-kubeconfig-mergen)
+     * [Create confgmap from file](#create-confgmap-from-file)
 
   1. Kubernetes Certificates (Control Plane) / Security
      * [vmware - cluster api](https://docs.vmware.com/en/VMware-Tanzu-Kubernetes-Grid/1.6/vmware-tanzu-kubernetes-grid-16/GUID-cluster-lifecycle-secrets.html)
@@ -86,6 +107,10 @@
 
 ## Backlog 
 
+  1. Installation 
+     * [Kubernetes mit der Cluster API aufsetzen](#kubernetes-mit-der-cluster-api-aufsetzen)
+     * [Kubernetes mit kubadm aufsetzen (calico)](#kubernetes-mit-kubadm-aufsetzen-calico)
+      
   1. Kubernetes - Misc 
      * [Wann wird podIP vergeben ?](#wann-wird-podip-vergeben-)
      * [Bash completion installieren](#bash-completion-installieren)
@@ -111,7 +136,6 @@
      * [Ingress Controller auf Digitalocean (doks) mit helm installieren](#ingress-controller-auf-digitalocean-doks-mit-helm-installieren)
      * [Documentation for default ingress nginx](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/)
      * [Beispiel Ingress](#beispiel-ingress)
-     * [Install Ingress On Digitalocean DOKS](#install-ingress-on-digitalocean-doks)
      * [Achtung: Ingress mit Helm - annotations](#achtung-ingress-mit-helm---annotations)
      * [Permanente Weiterleitung mit Ingress](#permanente-weiterleitung-mit-ingress)
      * [ConfigMap Example](#configmap-example)
@@ -201,7 +225,7 @@
 ### Aufbau Allgemein
 
 
-### Schaubild 
+### Architecture
 
 ![Kubernetes Architecture - src: syseleven](https://www.syseleven.de/wp-content/uploads/2020/11/syseleven-webiste-loesungen-kubernetes-modell-800x400-web.jpg)
 
@@ -278,8 +302,13 @@ Er stellt sicher, dass Container in einem Pod ausgeführt werden.
   
 ### Referenzen 
 
-  * https://www.redhat.com/de/topics/containers/kubernetes-architecture
+  * https://www.redhat.com/en/topics/containers/kubernetes-architecture
 
+
+### Installation Variations
+
+
+![image](https://github.com/jmetzger/workshop-kubernetes-advanced-2024-07/assets/1933318/a558bb60-bc0b-4856-80f1-61080b8835e4)
 
 ### Structure Kubernetes Deep Dive
 
@@ -448,402 +477,551 @@ Dies wird durch ein HA-Cluster vermieden. Dort ist ein LoadBalancer davorgeschal
   * https://github.com/kubernetes/kubeadm/blob/main/docs/ha-considerations.md
 
 
-## Installation 
+## Installation
 
-### Kubernetes mit der Cluster API aufsetzen
+### Basic Installation with microk8s
 
+
+### Walkthrough
+
+```
+sudo snap install microk8s --classic
+microk8s status
+```
+
+### Optional
+
+```
+## Execute kubectl commands like so 
+microk8s kubectl
+microk8s kubectl cluster-info
+
+## Make it easier with an alias 
+echo "alias kubectl='microk8s kubectl'" >> ~/.bashrc
+source ~/.bashrc
+kubectl
+
+```
+### Working with snaps 
+
+```
+snap info microk8s 
+
+```
+
+### Ref:
+
+  * https://microk8s.io/docs/setting-snap-channel
+
+### Create cluster after basic installation
+
+
+### Walkthrough 
+
+```
+## auf master (jeweils für jedes node neu ausführen)
+microk8s add-node
+
+## dann auf jeweiligem node vorigen Befehl der ausgegeben wurde ausführen
+## Kann mehr als 60 sekunden dauern ! Geduld...Geduld..Geduld 
+##z.B. -> ACHTUNG evtl. IP ändern 
+microk8s join 10.128.63.86:25000/567a21bdfc9a64738ef4b3286b2b8a69
+
+```
+
+### Auf einem Node addon aktivieren z.B. ingress
+
+```
+gucken, ob es auf dem anderen node auch aktiv ist. 
+```
+
+### Ref:
+
+  * https://microk8s.io/docs/high-availability
+
+### Connect from remote
+
+
+### Step 1: Install kubectl on local machine (or jump-server)
+
+```
+## on CLIENT install kubectl 
+sudo snap install kubectl --classic
+```
+
+### Step 2: configure kubectl 
+
+```
+## On MASTER -server get config 
+## als root
+microk8s config > /tmp/config
+cat /tmp/config 
+```
+
+```
+## Optional or simply copy & paste 
+## Download (scp config file) and store in .kube - folder  
+```
+
+```
+cd
+mkdir .kube
+cd .kube  # Wichtig: config muss nachher im verzeichnis .kube liegen 
+## scp kurs@master_server:/path/to/remote_config config 
+## z.B. 
+scp kurs@192.168.56.102:/home/kurs/remote_config config
+## oder benutzer 11trainingdo
+scp 11trainingdo@192.168.56.102:/home/11trainingdo/remote_config config 
+
+##### Evtl. IP-Adresse in config zum Server aendern 
+
+## Ultimative 1. Test auf CLIENT 
+kubectl cluster-info 
+
+## or if using kubectl or alias 
+kubectl get pods 
+
+## if you want to use a different kube config file, you can do like so 
+kubectl --kubeconfig /home/myuser/.kube/myconfig
+
+```
+
+### Setup bash completion
+
+
+### Walkthrough 
+
+```
+apt install bash-completion
+source /usr/share/bash-completion/bash_completion
+## is it installed properly 
+type _init_completion
+```
+
+```
+## activate for all users 
+kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
+
+## verify with new login 
+## example 
+su - tln1
+
+## zum Testen
+kubectl g<TAB>
+```
+
+## Kubernetes Imperative Commands (for debugging)
+
+### Example with run
+
+
+### Example (that does work)
+
+```
+## Show the pods that are running 
+kubectl get pods 
+
+## Synopsis (most simplistic example 
+## kubectl run NAME --image=IMAGE_EG_FROM_DOCKER
+## example
+kubectl run nginx --image=nginx:1.23
+
+kubectl get pods 
+## on which node does it run ? 
+kubectl get pods -o wide 
+```
+
+### Example (that does not work) 
+
+```
+kubectl run foo2 --image=foo2
+## ImageErrPull - Image konnte nicht geladen werden 
+kubectl get pods 
+## Weitere status - info 
+kubectl describe pods foo2 
+```
+
+### Ref:
+
+  * https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run
+
+## LoadBalancer
+
+### Setup internal loadBalancer for type LoadBalancer in Service
+
+
+### Step 1: helm chart install
+
+```
+helm repo add metallb https://metallb.github.io/metallb
+helm install metallb metallb/metallb --version 0.14.5 --namespace=metallb-system --create-namespace
+```
+
+```
+## Wait for all the systems to come up
+kubectl -n metallb-system get pods -o wide 
+```
+
+### Step 2: addresspool und Propagation-type (config) 
+
+```
+cd
+mkdir -p manifests
+cd manifests
+mkdir lb
+cd lb
+vi 01-addresspool.yml 
+```
+
+```
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: first-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  # we will use our external ip here 
+  - 134.209.231.154-134.209.231.154
+  # both notations are possible 
+  - 157.230.113.124/32
+```
+
+```
+kubectl apply -f .
+```
+
+```
+vi 02-advertisement.yml
+```
+
+```
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: example
+  namespace: metallb-system
+```
+
+```
+kubectl apply -f .
+```
+
+### Schritt 4: Test do i get an external ip 
+
+```
+vi 03-deploy.yml
+```
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  selector:
+    matchLabels:
+      run: web-nginx
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: web-nginx
+    spec:
+      containers:
+      - name: cont-nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+
+```
+
+
+```
+vi 04-service.yml
+```
+
+```
+## 02-svc.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-nginx
+  labels:
+    svc: nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    run: web-nginx
+```
+
+
+```
+kubectl apply -f .
+kubectl get pods
+kubectl get svc
+```
+
+```
+kubectl delete -f 03-deploy.yml 04-service.yml 
+
+## Scale
+
+### Horizontal Pod Autoscaler
+
+
+### Example: newest version with autoscaling/v2 used to be hpa/v1
+
+#### Prerequisites 
+
+  * Metrics-Server needs to be running 
+
+```
+## Test with
+kubectl top pods 
+```
+
+```
+## Install
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+## after that at will be available in kube-system namespace as pod
+kubectl -n kube-system get pods | grep -i metrics 
+```
+
+#### Step 1: deploy app 
+
+```
+cd
+mkdir -p manifests
+cd manifests
+mkdir hpa 
+cd hpa 
+vi 01-deploy.yaml 
+```
+
+
+```
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+      - name: hello
+        image: k8s.gcr.io/hpa-example
+        resources:
+          requests:
+            cpu: 100m
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello
+spec:
+  selector:
+    app: hello
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hello
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+```
+
+### Step 2: Load Generator 
+
+```
+vi 02-loadgenerator.yml 
+```
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-generator
+  labels:
+    app: load-generator
+spec:
+  replicas: 100
+  selector:
+    matchLabels:
+      app: load-generator
+  template:
+    metadata:
+      name: load-generator
+      labels:
+        app: load-generator
+    spec:
+      containers:
+      - name: load-generator
+        image: busybox
+        command:
+        - /bin/sh
+        - -c
+        - "while true; do wget -q -O- http://hello.default.svc.cluster.local; done"
+
+```
+
+### Downscaling 
+ 
+   * Downscaling will happen after 5 minutes o
+
+```
+## Adjust down to 1 minute 
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hello
+spec:
+  # change to 60 secs here 
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60
+  # end of behaviour change
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+
+
+```
+
+```
+For scaling down the stabilization window is 300 seconds (or the value of the --horizontal-pod-autoscaler-downscale-stabilization flag if provided)
+```
+
+### Prevent Downscaling 
+
+```
+## Adjust down to 1 minute 
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hello
+spec:
+  # change to 60 secs here 
+  behavior:
+    scaleDown:
+      selectPolicy: Disabled
+  # end of behaviour change
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+    
+```
+
+### Reference 
+
+  * https://docs.digitalocean.com/tutorials/cluster-autoscaling-ca-hpa/
+  * https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-more-specific-metrics
+  * https://medium.com/expedia-group-tech/autoscaling-in-kubernetes-why-doesnt-the-horizontal-pod-autoscaler-work-for-me-5f0094694054
+
+## Installation IngressController
+
+### Install Ingress On Digitalocean
+
+
+### Basics 
+
+  * works for all plattform with helm if no ingresscontroller ist present
+  * if you have ingress - objekts and no ingresscontroller nothing works  
 
 ### Prerequisites 
 
-  * You need to have a Kubernetes Cluster running (this will be the management cluster) 
-    * Within that you will you have cluster api 
-    * This could be something like kind, rancherdesktop.io
-    * And of course also a cluster on premise 
+  * kubectl must be set up
 
-### Step 1: Create Management Cluster 
-
-#### Step 1a: Install clusterctl 
+### Walkthrough (Setup Ingress Controller) 
 
 ```
-## Install rancherdesktop.io 
-## You are able to use it on windows (that's what we do now, and install 
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
 
-## Install clusterctl in wsl -> Ubuntu 
-sudo su -
-cd /usr/src 
-curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.4.2/clusterctl-linux-amd64 -o clusterctl
-sudo install -o root -g root -m 0755 clusterctl /usr/local/bin/clusterctl
-clusterctl version 
-```
+## helm show values ingress-nginx/ingress-nginx
 
-  * Reference gist: https://gist.github.com/vfarcic/d8113b6f149583e1cf1614d76f2a4182
-  * https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl
+## It will be setup with type loadbalancer - so waiting to retrieve an ip from the external loadbalancer
+## This will take a little. 
+helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress --create-namespace --set controller.publishService.enabled=true 
 
-#### Step 1b: Set env variables for digitalocean 
+## See when the external ip comes available
+kubectl -n ingress get all
+kubectl --namespace ingress get services -o wide -w nginx-ingress-ingress-nginx-controller
 
-```
-export DIGITALOCEAN_ACCESS_TOKEN=[...] # Replace with your token here 
+## Output  
+NAME                                     TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE     SELECTOR
+nginx-ingress-ingress-nginx-controller   LoadBalancer   10.245.78.34   157.245.20.222   80:31588/TCP,443:30704/TCP   4m39s   app.kubernetes.io/component=controller,app.kubernetes.io/instance=nginx-ingress,app.kubernetes.io/name=ingress-nginx
+
+## Now setup wildcard - domain for training purpose 
+## inwx.com
+*.lab1.t3isp.de A 157.245.20.222 
+
 
 ```
 
-
-#### Step 1c: Create kubernetes snapshot to be used for Kubernetes Control Plane and workers 
-
-``` 
-## can be done as unprivileged user !!! 
-export PATH=$PATH:~/.local/bin
-sudo apt update
-apt install -y jq zip 
-sudo git clone https://github.com/kubernetes-sigs/image-builder
-cd image-builder/images/capi
-cat Makefile
-## Size of machine will always be 1gb and 1vcpu created in NYC1 
-make build-do-ubuntu-2004
-```
-
-#### Step 1d: Add Snapshot to Region FRA1
-
-```
--> Add to Region FRA1 -> under Manage -> Images -> Snapshots 
-Please do this through the web-interface of DigitalOcean 
-## IF YOU DO NOT DO THIS... Droplets cannot be created because they are in NYC1
-```
-
-#### Step 1e: Install doctl (optional)
-
-```
-## works in most cases on wsl, but only if snap is working properly 
-## snap install doctl 
-## if not do -> this 
-
-cd ~
-wget https://github.com/digitalocean/doctl/releases/download/v1.94.0/doctl-1.94.0-linux-amd64.tar.gz
-tar xf ~/doctl-1.94.0-linux-amd64.tar.gz
-sudo mv ~/doctl /usr/local/bin
-
-## now authenticate 
-doctl auth init --access-token ${DIGITALOCEAN_ACCESS_TOKEN}
-
-```
-
-#### Step 1f: Set env for to create worker cluster with controlplane and workers 
-
-```
-## control the datacenter - default nyc1 
-export DO_REGION=fra1
-## control size of machines
-## default 1vcpu-1gb 
-export DO_CONTROL_PLANE_MACHINE_TYPE=s-2vcpu-2gb
-export DO_NODE_MACHINE_TYPE=s-2vcpu-2gb
-## needed to set up the api provider 
-export DO_B64ENCODED_CREDENTIALS="$(\
-    echo -n "$DIGITALOCEAN_ACCESS_TOKEN" \
-    | base64 \
-    | tr -d '\n')"
-    
-## get the snapshot id / get the right id 
-doctl compute image list-user
-## e.g. 
-## 132627725
-
-export DO_CONTROL_PLANE_MACHINE_IMAGE=132627725
-export DO_NODE_MACHINE_IMAGE=132627725
-
-```
-
-#### Step 1g: Setup cluster and api-provider 
-
-```
-### In our case it sets up the management cluster on rancher 
-### to be used for kubernetes 
-cd ../../../
-
-clusterctl init \
-    --infrastructure digitalocean
-
-```
-
-#### Step 1h: Generate the yaml scripts for both control plane and workers 
-
-```
-## it looks there will be a fingerprint to be used, which chooses the ssh-key to be used
-## to connect to the machines
-## look for all the ssh-key like so:
-doctl compute ssh-key list 
-
-## So we choose one from the list 
-export DO_SSH_KEY_FINGERPRINT=[...]
-
-## Check the variables 
-## Show use the necessary env-variables.
-clusterctl generate cluster devops-toolkit \
-    --infrastructure digitalocean \
-    --target-namespace infra \
-    --kubernetes-version v1.24.11 \
-    --control-plane-machine-count 3 \
-    --worker-machine-count 3 \
-    --list-variables 
-
-
-## Kuberentes must be the same version as you created the snapshots for do
-## to be used for digitalocean -> creating a cluster there
-clusterctl generate cluster devops-toolkit \
-    --infrastructure digitalocean \
-    --target-namespace infra \
-    --kubernetes-version v1.24.11 \
-    --control-plane-machine-count 3 \
-    --worker-machine-count 3 \
-    | tee cluster.yaml
-    
-kubectl create namespace infra
-
-kubectl apply --filename cluster.yaml
-```
-
-#### Step 1i: Wait till the control plane is initialized + install calico 
-
-```
-kubectl get kubeadmcontrolplane
-
-## When initialized get kubeconfig and install calicao 
-clusterctl --namespace infra2 \
-    get kubeconfig devops-toolkit \
-    | tee kubeconfig.yaml
-
-
-kubectl --kubeconfig kubeconfig.yaml get ns
-## you will see control plane is not ready because of network missing
-kubectl --kubeconfig kubeconfig.yaml get nodes
-
-kubectl --kubeconfig kubeconfig.yaml apply -f https://docs.projectcalico.org/v3.25/manifests/calico.yaml
-
-```
-
-#### Step 1j: READY it is (says Yoda) 
-
-```
-## Wait a while, now you will see, the nodes are ready
-kubectl --kubeconfig kubeconfig.yaml get nodes 
-``` 
-
-### Kubernetes mit kubadm aufsetzen (calico)
-
-
-### Version 
-
-  * Ubuntu 20.04 LTS 
-
-### Done for you 
-
-  * Servers are setup:
-    * ssh-running
-    * kubeadm, kubelet, kubectl installed
-    * containerd - runtime installed 
-
-  * Installed on all nodes (with cloud-init)
-
-```
-##!/bin/bash 
-
-groupadd sshadmin
-USERS="mysupersecretuser"
-SUDO_USER="mysupersecretuser"
-PASS="yoursupersecretpass"
-for USER in $USERS
-do
-  echo "Adding user $USER"
-  useradd -s /bin/bash --create-home $USER
-  usermod -aG sshadmin $USER
-  echo "$USER:$PASS | chpasswd
-done
-
-## We can sudo with $SUDO_USER
-usermod -aG sudo $SUDO_USER
-
-## 20.04 and 22.04 this will be in the subfolder
-if [ -f /etc/ssh/sshd_config.d/50-cloud-init.conf ]
-then
-  sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config.d/50-cloud-init.conf
-fi
-
-### both is needed 
-sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config
-
-usermod -aG sshadmin root
-
-## TBD - Delete AllowUsers Entries with sed 
-## otherwice we cannot login by group 
-
-echo "AllowGroups sshadmin" >> /etc/ssh/sshd_config 
-systemctl reload sshd
-
-## Now let us do some generic setup
-echo "Installing kubeadm kubelet kubectl"
-
-#### A lot of stuff needs to be done here
-#### https://www.linuxtechi.com/install-kubernetes-on-ubuntu-22-04/
-
-## 1. no swap please
-swapoff -a
-sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-
-## 2. Loading necessary modules
-echo "overlay" >> /etc/modules-load.d/containerd.conf
-echo "br_netfilter" >> /etc /modules-load.d/containerd.conf
-modprobe overlay
-modprobe br_netfilter
-
-## 3. necessary kernel settings
-echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.d/kubernetes.conf
-sysctl --system
-
-## 4. Update the meta-information
-apt-get -y update
-
-## 5. Installing container runtime
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"       apt-get install -y containerd.io
-
-## 6. Configure containerd
-containerd config default > /etc/containerd/config.toml
-sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
-systemctl restart containerd
-systemctl enable containerd
-
-## 7. Add Kubernetes Repository for Kubernetes
-mkdir -m 755 /etc/apt/keyrings
-apt-get install -y apt-transport-https ca-certificates curl gpg
-curl -fsSL https://pkgs.k8s.io/core:/stable:/$K8S_VERSION/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/$K8S_VERSI                                                                                                               # 8. Install kubectl kubeadm kubectl
-apt-get -y update
-apt-get install -y kubelet kubeadm kubectl
-apt-mark hold -y kubelet kubeadm kubectl
-
-## 9. Install helm
-snap install helm --classic
-
-## Installing nfs-common
-apt-get -y install nfs-common
-```
-
-
-### Prerequisites 
-
-  * 4 Servers setup and reachable through ssh.
-  * user: 11trainingdo
-  * pass: PLEASE ask your instructor 
-
-
-```
-## Important - Servers are not reachable through
-## Domain !! Only IP. 
-controlplane.tln<nr>.t3isp.de 
-worker1.tln<nr>.do.t3isp.de
-worker2.tln<nr>.do.t3isp.de
-worker3.tln<nr>.do.t3isp.de
-```
-
-### Step 1: Setup controlnode (login through ssh) 
-
-```
-## This CIDR is the recommendation for calico
-## Other CNI's might be different 
-CLUSTER_CIDR="192.168.0.0/16"
-
-kubeadm init --pod-network-cidr=$CLUSTER_CIDR && \
-  mkdir -p /root/.kube && \
-  cp -i /etc/kubernetes/admin.conf /root/.kube/config && \
-  chown $(id -u):$(id -g) /root/.kube/config && \
-  cp -i /root/.kube/config /tmp/config.kubeadm && \
-  chmod o+r /tmp/config.kubeadm 
-```
-
-```
-## Copy output of join (needed for workers) 
-## e.g. 
-kubeadm join 159.89.99.35:6443 --token rpylp0.rdphpzbavdyx3llz \
-        --discovery-token-ca-cert-hash sha256:05d42f2c051a974a27577270e09c77602eeec85523b1815378b815b64cb99932
-```
-
-### Step 2: Setup worker1 - node (login through ssh) 
-
-```
-## use join command from Step 1:
-kubeadm join 159.89.99.35:6443 --token rpylp0.rdphpzbavdyx3llz \
-        --discovery-token-ca-cert-hash sha256:05d42f2c051a974a27577270e09c77602eeec85523b1815378b815b64cb99932
-```
-
-### Step 3: Setup worker2 - node (login through ssh) 
-
-```
-## use join command from Step 1:
-kubeadm join 159.89.99.35:6443 --token rpylp0.rdphpzbavdyx3llz \
-        --discovery-token-ca-cert-hash sha256:05d42f2c051a974a27577270e09c77602eeec85523b1815378b815b64cb99932
-```
-
-### Step 4: Setup worker3 - node (login through ssh) 
-
-```
-## use join command from Step 1:
-kubeadm join 159.89.99.35:6443 --token rpylp0.rdphpzbavdyx3llz \
-        --discovery-token-ca-cert-hash sha256:05d42f2c051a974a27577270e09c77602eeec85523b1815378b815b64cb99932
-```
-
-### Step 5: CNI-Setup (calico) on controlnode (login through ssh) 
-
-```
-kubectl get nodes 
-```
-
-```
-## Output
-root@controlplane:~# kubectl get nodes
-NAME           STATUS     ROLES           AGE     VERSION
-controlplane   NotReady   control-plane   6m27s   v1.28.6
-worker1        NotReady   <none>          3m18s   v1.28.6
-worker2        NotReady   <none>          2m10s   v1.28.6
-worker3        NotReady   <none>          60s     v1.28.6
-```
-
-```
-## Installing calico CNI 
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml
-kubectl get ns
-kubectl -n calico-system get all
-kubectl -n calico-system get pods -o wide -w 
-```
-
-```
-## After if all pods are up and running -> CTRL + C
-```
-
-```
-kubectl -n calico-system get pods -o wide
-## all nodes should be ready now 
-kubectl get nodes -o wide 
-```
-
-```
-## Output
-root@controlplane:~# kubectl get nodes
-NAME           STATUS   ROLES           AGE    VERSION
-controlplane   Ready    control-plane   14m    v1.28.6
-worker1        Ready    <none>          11m    v1.28.6
-worker2        Ready    <none>          10m    v1.28.6
-worker3        Ready    <none>          9m9s   v1.28.6
-```
 
 ## Kubernetes Praxis API-Objekte 
 
-### Das Tool kubectl (Devs/Ops) - Spickzettel
+### Das Tool kubectl (Devs/Ops) - Cheatsheet
 
 
 ### Allgemein 
 
 ```
-## Zeige Information über das Cluster 
+## Zeige Information über das Cluster
+## Show Information about the cluster 
 kubectl cluster-info 
 
-## Welche api-resources gibt es ?
+kubectl get nodes
+kubectl get nodes -o wide 
+
+## Which  api-resources ? 
 kubectl api-resources 
 
 ## Hilfe zu object und eigenschaften bekommen
@@ -946,10 +1124,94 @@ kubectl config set-context --current --namespace <dein-namespace>
 
   * https://kubernetes.io/de/docs/reference/kubectl/cheatsheet/
 
-### Bauen einer Applikation mit Resource Objekten
+### Build applikation with Resource Objects
 
 
 ![Bauen einer Webanwendung](images/WebApp.drawio.png)
+
+### Create Pod
+
+
+### Walkthrough 
+
+```
+cd 
+mkdir -p manifests
+cd manifests
+mkdir -p web
+cd web
+```
+
+```
+## vi nginx-static.yml 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-static-web
+  labels:
+    webserver: nginx
+spec:
+  containers:
+  - name: web
+    image: nginx:1.23
+
+```
+
+```
+kubectl apply -f nginx-static.yml 
+kubectl describe pod nginx-static-web 
+## show config 
+kubectl get pod/nginx-static-web -o yaml
+kubectl get pod/nginx-static-web -o wide 
+```
+
+### Create Replicaset
+
+
+```
+cd
+mkdir -p manifests
+cd manifests
+mkdir 02-rs 
+cd 02-rs 
+vi rs.yml
+```
+
+```
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-replica-set
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      name: template-nginx-replica-set
+      labels:
+        tier: frontend
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.21
+          ports:
+            - containerPort: 80
+             
+
+             
+```
+
+```
+kubectl apply -f .
+kubectl get all
+## delete one of the pods 
+kubectl delete po nginx-replica-set-xyzhg
+## new pod should have been created 
+kubectl get all 
+```
 
 ### kubectl/manifest/deployments
 
@@ -974,7 +1236,7 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  replicas: 8 # tells deployment to run 2 pods matching the template
+  replicas: 8 # tells deployment to run 8 pods matching the template
   template:
     metadata:
       labels:
@@ -989,7 +1251,8 @@ spec:
 ```
 
 ```
-kubectl apply -f deploy.yml 
+kubectl apply -f .
+kubectl get all
 ```
 
 ### Services - Aufbau
@@ -1035,6 +1298,7 @@ spec:
 
 ```
 kubectl apply -f .
+
 ```
 
 ### Schritt 2:
@@ -1046,8 +1310,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: my-nginx
-  labels:
-    svc: nginx
 spec:
   ports:
   - port: 80
@@ -1058,6 +1320,18 @@ spec:
 
 ```
 kubectl apply -f . 
+kubectl get svc my-nginx
+kubectl describe svc my-nginx
+```
+
+```
+## Testing
+kubectl delete -f 01-deploy.yml
+
+## No endpoints in svc 
+kubectl describe svc my-nginx
+kubectl apply -f 01-deploy.yml
+kubectl describe svc my-nginx
 ```
 
 ### Schritt 2b: NodePort 
@@ -1139,17 +1413,8 @@ written to stdout
 
   * https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-ingress-guide-nginx-example.html
 
-### Beispiel mit Hostnamen
+### Example with Hostnames
 
-
-### Prerequisits
-
-```
-## Ingress Controller muss aktiviert sein 
-### Nur der Fall wenn man microk8s zum Einrichten verwendet 
-### Ubuntu 
-microk8s enable ingress
-```
 
 ### Walkthrough 
 
@@ -1231,7 +1496,7 @@ spec:
 kubectl apply -f banana.yml
 ```
 
-### Step 2: Ingress 
+#### Step 2: Ingress 
 
 ```
 ## Ingress
@@ -1325,7 +1590,7 @@ spec:
 ### Configmap MariaDB - Example
 
 
-### Schritt 1: configmap 
+### Step 1: configmap 
 
 ```
 cd 
@@ -1354,7 +1619,7 @@ kubectl get cm mariadb-configmap -o yaml
 ```
 
 
-### Schritt 2: Deployment 
+### Step 2: Deployment 
 ```
 nano 02-deploy.yml
 ```
@@ -1386,6 +1651,13 @@ spec:
 
 ```
 kubectl apply -f .
+kubectl exec -it  mariadb-deployment-c6df6f959-9jvkb -- bash
+```
+
+```
+## env
+env
+env | grep -i mariadb_root
 ```
 
 ### Important Sidenode 
@@ -1394,6 +1666,72 @@ kubectl apply -f .
   * So kubectl apply -f deploy.yml will not have any effect
   * to fix, use stakater/reloader: https://github.com/stakater/Reloader
 
+
+## Kubernetes - Sidecar Example
+
+### Kubernetes Sidecar
+
+
+### Walkthrough 
+
+```
+cd
+mkdir -p manifests
+cd manifests
+mkdir -p sidecar
+cd sidecar
+```
+
+```
+nano 01-pod.yml
+```
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sidecar-example 
+spec:
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+  containers:
+  - name: splunk-uf
+    image: splunk/universalforwarder:latest
+    env:
+    - name: SPLUNK_START_ARGS
+      value: --accept-license
+    - name: SPLUNK_USER
+      value: root
+    - name: SPLUNK_GROUP
+      value: root
+    - name: SPLUNK_PASSWORD
+      value: helloworld
+    - name: SPLUNK_CMD
+      value: add monitor /var/log/
+    - name: SPLUNK_STANDALONE_URL
+      value: splunk.company.internal
+    volumeMounts:
+    - name: shared-data
+      mountPath: /var/log
+  - name: my-nginx
+    image: nginx
+    volumeMounts:
+    - name: shared-data
+      mountPath: /var/log/nginx/
+  volumes:
+  - name: shared-data
+    emptyDir: {}
+```
+
+```
+kubectl apply -f .
+kubectl get pods sidecar-example
+kubectl decribe pods sidecar-example
+## exec into my-nginx
+kubectl exec -it sidecar-example -c my-nginx -- sh
+
+``` 
 
 ## Kubernetes - Probes
 
@@ -1426,19 +1764,20 @@ kubectl apply -f .
 
 ## Kubernetes - Wartung / Debugging 
 
-### Netzwerkverbindung zu pod testen
+### Create Network-Connection to pod
 
 
 ### Situation 
 
 ```
 Managed Cluster und ich kann nicht auf einzelne Nodes per ssh zugreifen
+Managed Cluster and i am not able to access nodes per ssh.
 ```
 
-### Behelf: Eigenen Pod starten mit busybox 
+### Behelf: Eigenen Pod starten mit busybox // Bring your own pod 
 
 ```
-## laengere Version 
+## laengere Version / longer version 
 kubectl run podtest --rm -ti --image busybox -- /bin/sh
 ```
 
@@ -1450,7 +1789,7 @@ kubectl run podtest --rm -ti --image busybox
 ### Example test connection 
 
 ```
-## wget befehl zum Kopieren
+## wget (to copy)
 wget -O - http://10.244.0.99
 ```
 
@@ -1915,6 +2254,14 @@ mv all-in-one-kubeconfig.yaml config
 ```
 kubectl config 
 kubectl config use-context mycontext
+```
+
+### Create confgmap from file
+
+
+```
+## Creates a users.yaml configmap-manifest 
+kubectl create cm users --from-file=users.json --dry-run=client -o yaml > users.yaml
 ```
 
 ## Kubernetes Certificates (Control Plane) / Security
@@ -3018,7 +3365,7 @@ spec:
 
 ### Downscaling 
  
-   * Downscalinng will happen after 5 minutes o
+   * Downscaling will happen after 5 minutes o
 
 ```
 ## Adjust down to 1 minute 
@@ -3051,6 +3398,36 @@ spec:
 
 ```
 For scaling down the stabilization window is 300 seconds (or the value of the --horizontal-pod-autoscaler-downscale-stabilization flag if provided)
+```
+
+### Prevent Downscaling 
+
+```
+## Adjust down to 1 minute 
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hello
+spec:
+  # change to 60 secs here 
+  behavior:
+    scaleDown:
+      selectPolicy: Disabled
+  # end of behaviour change
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+    
 ```
 
 ### Reference 
@@ -3659,6 +4036,526 @@ while true; do curl http://jochen.istio.t3isp.de/api/catalog; sleep .5; done
 ##-> General ausklappen 
 ```
 
+## Installation 
+
+### Kubernetes mit der Cluster API aufsetzen
+
+
+### Komponenten 
+
+  1. 1x Management-Cluster
+  1. beliebig viele Workload Cluster, die vom Management Cluster verwaltet werden
+
+### Voraussetzungen (für Management - Cluster) 
+
+  * Cluster erstellt mit kubeadm (für Management - Cluster) 
+  * Zugriff zu Cluster auf ./kube/config eingerichtet.
+  * clusterctl installieren
+  * kubectl installieren 
+
+### Phase 1: Kubernetes-Cluster erstellen und zu Management-Cluster upgraden 
+
+### Schritt 1.1: Cluster erstellen mit kubeadm
+
+  * Wir verwenden dafür ein paar selbsterstellte Scripte
+
+```
+## Ein Cluster erstellen 
+cd multi-kubeadmin
+./create-multi.sh 1
+## Alternativ: Gleich mehrere Cluster für das Training erstellen
+## ./create-multi.sh 2
+```
+
+### Schritt 1.2: kubectl runterladen und installieren 
+
+```
+## Variante 1:
+## Systemd needs to work with wsl
+## https://devblogs.microsoft.com/commandline/systemd-support-is-now-available-in-wsl/
+sudo su - 
+snap install --classic kubectl 
+```
+
+```
+## Variante 2: Download and install binary (untested)
+sudo su -
+## https://kubernetes.io/de/docs/tasks/tools/install-kubectl/#installation-der-kubectl-anwendung-mit-curl
+curl -LO https://dl.k8s.io/release/$(curl -LS https://dl.k8s.io/release/stable.txt)/bin/darwin/amd64/kubectl
+chmod +x ./kubectl
+mv kubectl /usr/local/bin
+```
+
+### Schritt 1.3: kubeconfig einrichten und Verbindung prüfen 
+
+```
+## aus dem Onlinesystem unter /etc/kubernetes/admin.conf den Inhalt kopieren
+## nach lokal (unpriviligierter Nutzer)
+## in
+cd
+cd .kube
+vi config
+```
+
+```
+kubectl cluster-info
+```
+
+### Schritt 1.4: clusterctl installieren 
+
+```
+sudo su -
+cd /usr/src 
+curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.4.2/clusterctl-linux-amd64 -o clusterctl
+sudo install -o root -g root -m 0755 clusterctl /usr/local/bin/clusterctl
+clusterctl version 
+```
+
+### Schritt 1.5: Clusterctl initialisieren (mit dem richtigen provider)
+
+```
+## Feature Gate, das für die cluster-api gebraucht wird 
+export CLUSTER_TOPOLOGY=true
+export DIGITALOCEAN_ACCESS_TOKEN=<your-access-token>
+export DO_B64ENCODED_CREDENTIALS="$(echo -n "${DIGITALOCEAN_ACCESS_TOKEN}" | base64 | tr -d '\n')"
+
+## Initialize the management cluster
+clusterctl init --infrastructure digitalocean
+```
+
+### Phase 2: Spezielles Kubernetes Images verweden 
+
+  * Direkt mit allen Komponenten im Bauch in einer speziellen Version (z.B. 1.28.9)
+  * die für Kubernetes gebraucht werden 
+
+### Schritt 2.1: install doctl (used to interact with digitalocean) 
+
+```
+cd 
+wget https://github.com/digitalocean/doctl/releases/download/v1.107.0/doctl-1.107.0-linux-amd64.tar.gz
+tar xf ~/doctl-1.107.0-linux-amd64.tar.gz
+sudo mv ~/doctl /usr/local/bin
+sudo chmod +x /usr/local/bin/doctl 
+```
+
+### Schritt 2.2: install image builder for creating image for digitalocean 
+
+```
+## if not already done before 
+export DIGITALOCEAN_ACCESS_TOKEN=<your-access-token>
+## as unprivileged user 
+git clone https://github.com/kubernetes-sigs/image-builder.git
+cd image-builder/images/capi
+## install dependencies 
+make deps-do
+## show possible builds
+make help
+## Size of machine will always be 1gb and 1vcpu created in NYC1
+make build-do-ubuntu-2404
+```
+
+  * ACHTUNG: Das dauert eine ganze Weile das bauen
+
+![image](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/61cfdf53-d97e-4b0f-9b8e-1b2d0445b857)
+
+![image](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/b159c6fe-35c2-443f-a265-8cdf4ac2ef55)
+
+### Schritt 2.3: Which kubernetes cluster version is it ?
+
+```
+## you need to use exactly the same version for creating your workload cluster
+Creating snapshot: Cluster API Kubernetes v1.28.9 on Ubuntu 24.04
+```
+
+### Schritt 2.4: Allow Image to be use in Frankfurt Datacenter (FRA1) 
+
+```
+-> Add to Region FRA1 -> under Manage -> Backups&Snaphots -> Snapshots 
+Please do this through the web-interface of DigitalOcean 
+## IF YOU DO NOT DO THIS... Droplets cannot be created because they are in NYC1
+```
+
+### Phase 3: Workload - Cluster mit Cluster - API erstellen 
+
+### Schritt 3.1 Umgebung zum Ausrollen von ControlNode und Worker vorbereiten  
+
+```
+## control the datacenter - default nyc1 
+export DO_REGION=fra1
+## control size of machines
+## default 1vcpu-1gb 
+export DO_CONTROL_PLANE_MACHINE_TYPE=s-2vcpu-2gb
+export DO_NODE_MACHINE_TYPE=s-2vcpu-2gb
+## needed to set up the api provider 
+export DO_B64ENCODED_CREDENTIALS="$(\
+    echo -n "$DIGITALOCEAN_ACCESS_TOKEN" \
+    | base64 \
+    | tr -d '\n')"
+```
+
+### Schritt 3.2 Snaphot-id ausfindig machen 
+
+```
+doctl compute image list-user
+```
+
+```
+158401784    Cluster API Kubernetes v1.28.9 on Ubuntu 24.04
+```
+
+### Schritt 3.3 Use this snapshot for creation of workload-cluster 
+
+```
+export DO_CONTROL_PLANE_MACHINE_IMAGE=158401784
+export DO_NODE_MACHINE_IMAGE=158401784
+```
+
+### Schritt 3.4 Wir brauchen ein ssh-key 
+
+```
+## das sollte ein Schlüssel sein, für den wir bereits einen privaten Schlüssel haben
+## und den öffentlichen bei digitalocean hochgeladen haben.
+## Dieser wird dann für die Maschinen verwendet, die hochgezogen werden
+doctl compute ssh-key list 
+
+## wir nehmen den kubernetes key
+42134500    key_training_kubernetes
+```
+
+```
+## So übergeben wir diesen für das doctl - Tool
+export DO_SSH_KEY_FINGERPRINT=42134500
+```
+
+### Schritt 3.5 Cluster.yaml (config) für cluster-api erstellen 
+
+```
+## Achtung, es muss die gleiche version verwendet werden für die kubernetes version, wie im image
+## das mit dem Image-Builder erstellt wurde
+```
+
+```
+## Check the variables 
+## Show use the necessary env-variables.
+clusterctl generate cluster cluster1 \
+    --infrastructure digitalocean \
+    --target-namespace infra \
+    --kubernetes-version v1.28.9 \
+    --control-plane-machine-count 1 \
+    --worker-machine-count 3 \
+    --list-variables 
+```
+
+```
+## Now create the cluster.yaml file (config to create it)
+## Kuberentes must be the same version as you created the snapshots for do
+## to be used for digitalocean -> creating a cluster there
+clusterctl generate cluster cluster1 \
+    --infrastructure digitalocean \
+    --target-namespace infra \
+    --kubernetes-version v1.28.9 \
+    --control-plane-machine-count 1 \
+    --worker-machine-count 3 \
+    | tee cluster.yaml
+```
+
+```
+## Create namespace and management cluster for that
+kubectl create namespace infra
+
+## and create it 
+kubectl apply --filename cluster.yaml
+```
+
+### Schritt 3.5: Wait till controlplane is ready 
+
+```
+## Achtung das dauert wieder eine ganze Weile,
+## Man kann das im Backend von Digitalocean beobachten
+kubectl -n infra get kubeadmcontrolplane
+kubectl -n infra get domachines
+```
+
+### Schritt 3.6: Get kubeconfig 
+
+```
+## When initialized get kubeconfig 
+clusterctl --namespace infra \
+    get kubeconfig cluster1 \
+    | tee kubeconfig.yaml
+```
+
+### Schritt 3.7. Access new cluster with kubeconfi 
+
+```
+kubectl --kubeconfig kubeconfig.yaml get ns
+## Are all pods ready / of coredns not ;o) 
+kubectl --kubeconfig kubeconfig.yaml -n kube-system get pods 
+kubectl --kubeconfig kubeconfig.yaml get nodes
+## |    | nodes are not ready, because the is no cni-provider installed yet
+## v    v 
+```
+
+![image](https://github.com/jmetzger/training-kubernetes-advanced/assets/1933318/b2fa4c0c-378b-49d8-8d57-426193d7ae75)
+
+### Schritt 3.8. Now install cni -> calico (we will use the operator)
+
+```
+kubectl --kubeconfig kubeconfig.yaml create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
+## We also want the crd's
+kubectl --kubeconfig kubeconfig.yaml create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml
+```
+
+### Schritt 3.9. See the rollout and findout, if everything works 
+
+```
+## Now watch if everything works smoothly
+## everything should be ready 
+watch kubectl --kubeconfig kubeconfig-yaml get pods -n calico-system
+```
+
+```
+## + the kube-system coredns pod should also be ready now
+kubectl
+```
+
+
+#### Schritt 3.10 Installing the CCM (Cloud Controller Manager for digitalocean) 
+
+  * Important: Before that, the calico-controller will not run, because it cannot get scheduled
+  * There is a taint on the nodes
+    * node.cloudprovider.kubernetes.io/uninitialized
+    * There is another taint as well
+  * These 2 taints will first get removed, once the CCM is installed 
+
+```
+kubectl --kubeconfig=kubeconfig.yaml apply -f https://raw.githubusercontent.com/digitalocean/digitalocean-cloud-controller-manager/v0.1.54/releases/digitalocean-cloud-controller-manager/v0.1.54.yml
+```
+
+#### Phase 4: Cleanup 
+
+```
+## Delete cluster
+kubectl -n infra delete cluster cluster1
+
+## Delete management cluster
+## after that it probably just will be a normal cluster 
+kubectl delete cluster 
+```
+
+
+### References:
+
+  * https://cluster-api.sigs.k8s.io/user/quick-start.html#install-clusterctl
+  * https://cluster-api.sigs.k8s.io/user/quick-start
+  * https://github.com/kubernetes-sigs/cluster-api-provider-digitalocean/blob/main/docs/getting-started.md
+
+### Kubernetes mit kubadm aufsetzen (calico)
+
+
+### Version 
+
+  * Ubuntu 20.04 LTS 
+
+### Done for you 
+
+  * Servers are setup:
+    * ssh-running
+    * kubeadm, kubelet, kubectl installed
+    * containerd - runtime installed 
+
+  * Installed on all nodes (with cloud-init)
+
+```
+##!/bin/bash 
+
+groupadd sshadmin
+USERS="mysupersecretuser"
+SUDO_USER="mysupersecretuser"
+PASS="yoursupersecretpass"
+for USER in $USERS
+do
+  echo "Adding user $USER"
+  useradd -s /bin/bash --create-home $USER
+  usermod -aG sshadmin $USER
+  echo "$USER:$PASS | chpasswd
+done
+
+## We can sudo with $SUDO_USER
+usermod -aG sudo $SUDO_USER
+
+## 20.04 and 22.04 this will be in the subfolder
+if [ -f /etc/ssh/sshd_config.d/50-cloud-init.conf ]
+then
+  sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config.d/50-cloud-init.conf
+fi
+
+### both is needed 
+sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+
+usermod -aG sshadmin root
+
+## TBD - Delete AllowUsers Entries with sed 
+## otherwice we cannot login by group 
+
+echo "AllowGroups sshadmin" >> /etc/ssh/sshd_config 
+systemctl reload sshd
+
+## Now let us do some generic setup
+echo "Installing kubeadm kubelet kubectl"
+
+#### A lot of stuff needs to be done here
+#### https://www.linuxtechi.com/install-kubernetes-on-ubuntu-22-04/
+
+## 1. no swap please
+swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+## 2. Loading necessary modules
+echo "overlay" >> /etc/modules-load.d/containerd.conf
+echo "br_netfilter" >> /etc /modules-load.d/containerd.conf
+modprobe overlay
+modprobe br_netfilter
+
+## 3. necessary kernel settings
+echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.d/kubernetes.conf
+sysctl --system
+
+## 4. Update the meta-information
+apt-get -y update
+
+## 5. Installing container runtime
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"       apt-get install -y containerd.io
+
+## 6. Configure containerd
+containerd config default > /etc/containerd/config.toml
+sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+systemctl restart containerd
+systemctl enable containerd
+
+## 7. Add Kubernetes Repository for Kubernetes
+mkdir -m 755 /etc/apt/keyrings
+apt-get install -y apt-transport-https ca-certificates curl gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/$K8S_VERSION/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/$K8S_VERSI                                                                                                               # 8. Install kubectl kubeadm kubectl
+apt-get -y update
+apt-get install -y kubelet kubeadm kubectl
+apt-mark hold -y kubelet kubeadm kubectl
+
+## 9. Install helm
+snap install helm --classic
+
+## Installing nfs-common
+apt-get -y install nfs-common
+```
+
+
+### Prerequisites 
+
+  * 4 Servers setup and reachable through ssh.
+  * user: 11trainingdo
+  * pass: PLEASE ask your instructor 
+
+
+```
+## Important - Servers are not reachable through
+## Domain !! Only IP. 
+controlplane.tln<nr>.t3isp.de 
+worker1.tln<nr>.do.t3isp.de
+worker2.tln<nr>.do.t3isp.de
+worker3.tln<nr>.do.t3isp.de
+```
+
+### Step 1: Setup controlnode (login through ssh) 
+
+```
+## This CIDR is the recommendation for calico
+## Other CNI's might be different 
+CLUSTER_CIDR="192.168.0.0/16"
+
+kubeadm init --pod-network-cidr=$CLUSTER_CIDR && \
+  mkdir -p /root/.kube && \
+  cp -i /etc/kubernetes/admin.conf /root/.kube/config && \
+  chown $(id -u):$(id -g) /root/.kube/config && \
+  cp -i /root/.kube/config /tmp/config.kubeadm && \
+  chmod o+r /tmp/config.kubeadm 
+```
+
+```
+## Copy output of join (needed for workers) 
+## e.g. 
+kubeadm join 159.89.99.35:6443 --token rpylp0.rdphpzbavdyx3llz \
+        --discovery-token-ca-cert-hash sha256:05d42f2c051a974a27577270e09c77602eeec85523b1815378b815b64cb99932
+```
+
+### Step 2: Setup worker1 - node (login through ssh) 
+
+```
+## use join command from Step 1:
+kubeadm join 159.89.99.35:6443 --token rpylp0.rdphpzbavdyx3llz \
+        --discovery-token-ca-cert-hash sha256:05d42f2c051a974a27577270e09c77602eeec85523b1815378b815b64cb99932
+```
+
+### Step 3: Setup worker2 - node (login through ssh) 
+
+```
+## use join command from Step 1:
+kubeadm join 159.89.99.35:6443 --token rpylp0.rdphpzbavdyx3llz \
+        --discovery-token-ca-cert-hash sha256:05d42f2c051a974a27577270e09c77602eeec85523b1815378b815b64cb99932
+```
+
+### Step 4: Setup worker3 - node (login through ssh) 
+
+```
+## use join command from Step 1:
+kubeadm join 159.89.99.35:6443 --token rpylp0.rdphpzbavdyx3llz \
+        --discovery-token-ca-cert-hash sha256:05d42f2c051a974a27577270e09c77602eeec85523b1815378b815b64cb99932
+```
+
+### Step 5: CNI-Setup (calico) on controlnode (login through ssh) 
+
+```
+kubectl get nodes 
+```
+
+```
+## Output
+root@controlplane:~# kubectl get nodes
+NAME           STATUS     ROLES           AGE     VERSION
+controlplane   NotReady   control-plane   6m27s   v1.28.6
+worker1        NotReady   <none>          3m18s   v1.28.6
+worker2        NotReady   <none>          2m10s   v1.28.6
+worker3        NotReady   <none>          60s     v1.28.6
+```
+
+```
+## Installing calico CNI 
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml
+kubectl get ns
+kubectl -n calico-system get all
+kubectl -n calico-system get pods -o wide -w 
+```
+
+```
+## After if all pods are up and running -> CTRL + C
+```
+
+```
+kubectl -n calico-system get pods -o wide
+## all nodes should be ready now 
+kubectl get nodes -o wide 
+```
+
+```
+## Output
+root@controlplane:~# kubectl get nodes
+NAME           STATUS   ROLES           AGE    VERSION
+controlplane   Ready    control-plane   14m    v1.28.6
+worker1        Ready    <none>          11m    v1.28.6
+worker2        Ready    <none>          10m    v1.28.6
+worker3        Ready    <none>          9m9s   v1.28.6
+```
+
 ## Kubernetes - Misc 
 
 ### Wann wird podIP vergeben ?
@@ -3673,7 +4570,7 @@ kubectl get pods
 ## Synopsis (most simplistic example 
 ## kubectl run NAME --image=IMAGE_EG_FROM_DOCKER
 ## example
-kubectl run nginx --image=nginx 
+kubectl run nginx --image=nginx:1.23
 
 kubectl get pods 
 ## on which node does it run ? 
@@ -3733,17 +4630,29 @@ complete -F __start_kubectl k
 ### Remote-Verbindung zu Kubernetes (microk8s) einrichten
 
 
+### Step 1: Install kubectl on local machine (or jump-server)
+
 ```
 ## on CLIENT install kubectl 
-sudo snap install kubectl --classic 
+sudo snap install kubectl --classic
+```
 
+### Step 2: configure kubectl 
+
+```
 ## On MASTER -server get config 
 ## als root
-cd
-microk8s config > /home/kurs/remote_config 
+microk8s config > /tmp/config
+cat /tmp/config 
+```
 
+```
+## Optional or simply copy & paste 
 ## Download (scp config file) and store in .kube - folder  
-cd ~
+```
+
+```
+cd
 mkdir .kube
 cd .kube  # Wichtig: config muss nachher im verzeichnis .kube liegen 
 ## scp kurs@master_server:/path/to/remote_config config 
@@ -4079,7 +4988,7 @@ kubectl get pods
 ## Synopsis (most simplistic example 
 ## kubectl run NAME --image=IMAGE_EG_FROM_DOCKER
 ## example
-kubectl run nginx --image=nginx 
+kubectl run nginx --image=nginx:1.23
 
 kubectl get pods 
 ## on which node does it run ? 
@@ -4105,19 +5014,20 @@ kubectl describe pods foo2
 
 ### Basics 
 
-  * Das Verfahren funktioniert auch so auf anderen Plattformen, wenn helm verwendet wird und noch kein IngressController vorhanden
-  * Ist kein IngressController vorhanden, werden die Ingress-Objekte zwar angelegt, es funktioniert aber nicht. 
+  * works for all plattform with helm if no ingresscontroller ist present
+  * if you have ingress - objekts and no ingresscontroller nothing works  
 
 ### Prerequisites 
 
-  * kubectl muss eingerichtet sein 
+  * kubectl must be set up
 
 ### Walkthrough (Setup Ingress Controller) 
 
 ```
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
-helm show values ingress-nginx/ingress-nginx
+
+## helm show values ingress-nginx/ingress-nginx
 
 ## It will be setup with type loadbalancer - so waiting to retrieve an ip from the external loadbalancer
 ## This will take a little. 
@@ -4314,8 +5224,6 @@ spec:
               port:
                 number: 80                
 ```
-
-### Install Ingress On Digitalocean DOKS
 
 ### Achtung: Ingress mit Helm - annotations
 
