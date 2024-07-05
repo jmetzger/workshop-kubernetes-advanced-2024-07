@@ -25,6 +25,9 @@
   1. LoadBalancer
      * [Setup internal loadBalancer for type LoadBalancer in Service](metallb/metallb-helm-l2-aufsetzen.md)
     
+  1. Scale
+     * [Horizontal Pod Autoscaler](/kubernetes/autoscaling.md)
+    
   1. Installation IngressController
      * [Install Ingress On Digitalocean](digitalocean/ingress-auf-digitalocean-mit-helm.md)
   
