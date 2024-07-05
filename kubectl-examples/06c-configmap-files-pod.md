@@ -3,6 +3,19 @@
 ## Walkthrough 
 
 ```
+cd
+mkdir -p manifests
+cd manifests
+mkdir cm-files
+cd cm-files
+```
+
+```
+nano 01-cm.yml
+```
+
+
+```
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -16,6 +29,11 @@ data:
     </body>
     </html>
 ```
+
+```
+nano 02-pod.yml
+```
+
 
 ```
 apiVersion: v1
@@ -38,4 +56,18 @@ spec:
   - name: nginx-index-file
     configMap:
       name: index-html-configmap
+
 ```
+
+
+```
+kubectl apply -f .
+kubectl get pods -o wide 
+kubectl run -it --rm podtest --image=busybox  
+```
+
+```
+# in pod
+wget -O - <ip-of-pod>
+```
+
